@@ -7,36 +7,38 @@
 #include <linux/notifier.h>
 #include <linux/keyboard.h>
 
+#include "klmodule.h"
+
+#define NUMBER_OF_KEYCODES sizeof(keycodes)/sizeof(char*)
+
 static char*
-keycodes[] =
+keycode_to_key(unsigned int keycode)
 {
-  "",
-  "ESC",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",  
-  "6",
-  "7",
-  "8",
-  "9",
-  "0",
-  "-",
-  "=",
-  "BS",
-  "TAB"
-};
+  if (NUMBER_OF_KEYCODES > keycode)
+    return keycodes[keycode];
+  
+  return "UNKNOWN KEY";
+}
+
+static char*
+key_level(bool key_pressed)
+{
+  if (key_pressed)
+    return "PRESSED";
+
+  return "RELEASED";
+}
 
 static int
 key_callback(struct notifier_block *self, unsigned long val, void *data)
 {
-  unsigned int key = ((struct keyboard_notifier_param*) data)->value;
+  struct keyboard_notifier_param* key_event_state = data;
 
-  if(key < 16)
-  {
-    printk("key_callback: key=%s\n", keycodes[key]);
-  }
+  unsigned int keycode = key_event_state->value;
+  bool key_pressed = key_event_state->down;
+
+  printk("key_callback: <%s> <%s>\n", keycode_to_key(keycode), key_level(key_pressed));
+  printk("key_callback: <%d>\n", keycode);
 
   return NOTIFY_DONE;
 }
@@ -65,3 +67,5 @@ key_exit(void)
 module_init(key_init);
 module_exit(key_exit);
 MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Robert Peters");
+
