@@ -1,1 +1,17 @@
-linux keylogger kernel module over notfifier system
+                                     README
+                                     ======
+
+Description
+-----------
+  Keylogger for linux which uses the linux kernel notifier system.
+
+Tested kernel versions
+----------------------
+  2.6.30   - works fine
+  2.6.27-9 - key_callback will be never called
+
+Todo
+----
+  - Write log in file or provide an interface over /proc or /dev.
+  - Encrypt the log
+  - Group the keys by user or tty (vc in key_event_state)
